@@ -106,7 +106,7 @@ namespace TestWalletApi.Controllers
                 var сhangedTab = await _walletService.TransferMoney(dto);
                 return Ok(сhangedTab);
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
