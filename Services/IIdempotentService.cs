@@ -5,6 +5,6 @@ namespace TestWalletApi.Services
 {
     public interface IIdempotentService
     {
-        Task<bool> CheckIdempotent(string idempotentKey, BaseMoneyDto parameters);
+        Task<bool?> CheckIdempotent(string idempotentKey, BaseMoneyDto parameters);
     }
 }

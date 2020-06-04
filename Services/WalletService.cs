@@ -51,7 +51,7 @@ namespace TestWalletApi.Services
         {
             var wallet = await GetWallet(dto.WalletId);
             if (wallet == null)
-                throw new Exception(nameof(dto.WalletId)); // ObjectNotFoundException //todo
+                return null;
 
             ///тут бы добавил проверку на то что, кошелек принадлежит текущему пользователю
 
@@ -98,18 +98,16 @@ namespace TestWalletApi.Services
         {
             var wallet = await GetWallet(dto.WalletId);
             if (wallet == null)
-                throw new Exception(nameof(dto.WalletId)); // ObjectNotFoundException //todo
+                return null;
 
             ///тут бы добавил проверку на то что, кошелек принадлежит текущему пользователю
 
             var tabFrom = wallet.CurrencyTabs.FirstOrDefault(t => t.Сurrency == dto.FromCurrency);
             if (tabFrom == null)
-            {
-                throw new Exception(nameof(dto.FromCurrency)); // ObjectNotFoundException //todo
-            }
+                return null;
 
             var rates = await  _getter.GetRates();
-            var converter = new CurrencyConverter(rates, CurrencyRatesFromEuroBankGetter.MAIN_CURRENCY);
+            var converter = new CurrencyConverter(rates, CurrencyRatesFromEuroBankGetter.BASE_CURRENCY);
             var convertedAmount = converter.Convert(dto);
 
             var dtoFrom = new ChangeMoneyDto

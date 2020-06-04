@@ -13,7 +13,7 @@ namespace TestWalletApi.Domain.Converting
         private readonly IHttpClientFactory _clientFactory;
 
         //Это можно вынести в конфиги
-        public const CurrencyType MAIN_CURRENCY = CurrencyType.EUR;
+        public const CurrencyType BASE_CURRENCY = CurrencyType.EUR;
         private const string SOURCE_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
         public CurrencyRatesFromEuroBankGetter(IHttpClientFactory clientFactory)
@@ -32,7 +32,7 @@ namespace TestWalletApi.Domain.Converting
                 throw new InvalidOperationException($"Code: {response.StatusCode}. {response.ReasonPhrase}");
             }
 
-            var currencyRates = new Dictionary<CurrencyType, decimal> {[MAIN_CURRENCY] = 1};
+            var currencyRates = new Dictionary<CurrencyType, decimal> {[BASE_CURRENCY] = 1};
             
             var responseStr = await response.Content.ReadAsStringAsync();
             dynamic xml = XDocument.Parse(responseStr).Root;

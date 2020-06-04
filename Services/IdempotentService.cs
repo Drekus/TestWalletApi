@@ -20,9 +20,12 @@ namespace TestWalletApi.Services
             _db = db;
         }
 
-        public async Task<bool> CheckIdempotent(string idempotentKey, BaseMoneyDto parameters)
+        public async Task<bool?> CheckIdempotent(string idempotentKey, BaseMoneyDto parameters)
         {
             var userId = await GetUserId(parameters.WalletId);
+            if (userId == null)
+                return null;
+            
             var hash = GetHashDto(parameters);
 
             var row = await _db.IdempotentCaches.FindAsync(userId, idempotentKey, hash);
@@ -31,7 +34,7 @@ namespace TestWalletApi.Services
             
             await _db.IdempotentCaches.AddAsync(new IdempotentCache
             {
-                UserId = userId,
+                UserId = userId.Value,
                 IdempotentKey = idempotentKey,
                 ParametersHash = hash
             });
@@ -39,7 +42,7 @@ namespace TestWalletApi.Services
             return true;
         }
         
-        private async Task<long> GetUserId(long walletId)
+        private async Task<long?> GetUserId(long walletId)
         {
             // UserId хотел брать у контекстного пользователя
             // Но т.к. аутентификация по Т.З. не нужна 
@@ -47,9 +50,7 @@ namespace TestWalletApi.Services
             
             var wallet = await _db.Wallets.FindAsync(walletId);
             if (wallet == null)
-            {
-                throw new Exception(nameof(walletId)); // ObjectNotFoundException //todo
-            }
+                return null;
 
             return wallet.UserId;
         }

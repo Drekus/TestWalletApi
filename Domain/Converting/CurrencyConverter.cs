@@ -9,12 +9,12 @@ namespace TestWalletApi.Domain.Converting
     {
         private readonly IReadOnlyDictionary<CurrencyType, decimal> _currencyRates;
 
-        public CurrencyType MainCurrency { get; }
+        public CurrencyType BaseCurrency { get; }
 
-        public CurrencyConverter(IReadOnlyDictionary<CurrencyType, decimal> currencyRates, CurrencyType mainCurrency)
+        public CurrencyConverter(IReadOnlyDictionary<CurrencyType, decimal> currencyRates, CurrencyType baseCurrency)
         {
             _currencyRates = currencyRates;
-            MainCurrency = mainCurrency;
+            BaseCurrency = baseCurrency;
         }
 
         public decimal Convert(ConvertMoneyDto dto)

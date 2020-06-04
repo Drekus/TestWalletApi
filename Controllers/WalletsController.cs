@@ -66,7 +66,11 @@ namespace TestWalletApi.Controllers
             }
 
             var isFirstRequest = await _idempotentService.CheckIdempotent(idempotentKey, dto);
-            if (!isFirstRequest)
+            if (isFirstRequest == null)
+            {
+                return NotFound();
+            }
+            if (!isFirstRequest.Value)
             {
                 return StatusCode(StatusCodes.Status423Locked);
             }
@@ -74,6 +78,10 @@ namespace TestWalletApi.Controllers
             try
             {
                 var сhangedTab = await _walletService.AddMoney(dto);
+                if (сhangedTab == null)
+                {
+                    return NotFound();
+                }
                 return Ok(сhangedTab);
             }
             catch (ArgumentException ex)
@@ -96,15 +104,23 @@ namespace TestWalletApi.Controllers
             }
 
             var isFirstRequest = await _idempotentService.CheckIdempotent(idempotentKey, dto);
-            if (!isFirstRequest)
+            if (isFirstRequest == null)
+            {
+                return NotFound();
+            }
+            if (!isFirstRequest.Value)
             {
                 return StatusCode(StatusCodes.Status423Locked);
             }
             
             try
             {
-                var сhangedTab = await _walletService.TransferMoney(dto);
-                return Ok(сhangedTab);
+                var сhangedTabs = await _walletService.TransferMoney(dto);
+                if (сhangedTabs == null)
+                {
+                    return NotFound();
+                }
+                return Ok(сhangedTabs);
             }
             catch (ArgumentException ex)
             {
