@@ -24,17 +24,21 @@ namespace TestWalletApi.Domain.Converting
         public async Task<Dictionary<CurrencyType, decimal>> GetRates()
         {
             var client = _clientFactory.CreateClient();
-            var request = new HttpRequestMessage(HttpMethod.Get,SOURCE_URL);
+            var request = new HttpRequestMessage(HttpMethod.Get, SOURCE_URL);
             var response = await client.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new InvalidOperationException($"Code: {response.StatusCode}. {response.ReasonPhrase}");
             }
-
-            var currencyRates = new Dictionary<CurrencyType, decimal> {[BASE_CURRENCY] = 1};
-            
             var responseStr = await response.Content.ReadAsStringAsync();
+            return ParseRates(responseStr);
+        }
+
+        private static Dictionary<CurrencyType, decimal> ParseRates(string responseStr)
+        {
+            var currencyRates = new Dictionary<CurrencyType, decimal> { [BASE_CURRENCY] = 1 };
+
             dynamic xml = XDocument.Parse(responseStr).Root;
             dynamic item = xml.LastNode.FirstNode.FirstNode;
 
@@ -49,7 +53,7 @@ namespace TestWalletApi.Domain.Converting
                     item = item.NextNode;
                     continue;
                 }
-                
+
                 var rate = decimal.Parse(rateStr, CultureInfo.InvariantCulture);
 
                 currencyRates[currencyType] = rate;
