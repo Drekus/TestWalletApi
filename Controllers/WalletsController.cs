@@ -41,7 +41,7 @@ namespace TestWalletApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Parameters is invalid");
+                return BadRequest(ModelState);
             }
             
             try
@@ -62,7 +62,7 @@ namespace TestWalletApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Parameters is invalid");
+                return BadRequest(ModelState);
             }
 
             var isFirstRequest = await _idempotentService.CheckIdempotent(idempotentKey, dto);
@@ -100,7 +100,7 @@ namespace TestWalletApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Parameters is invalid");
+                return BadRequest(ModelState);
             }
 
             var isFirstRequest = await _idempotentService.CheckIdempotent(idempotentKey, dto);
